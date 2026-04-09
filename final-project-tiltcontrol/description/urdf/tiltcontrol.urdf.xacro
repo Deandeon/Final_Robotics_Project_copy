@@ -1,0 +1,455 @@
+<?xml version="1.0" ?>
+<robot name="tiltcontrol" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<!--  XACRO PROPERTIES -->
+<xacro:property name="wheel_mass" value="0.05" />
+<xacro:property name="wheel_ixx" value="0.0000153" />
+<xacro:property name="wheel_izz" value="0.0000306" />
+
+<xacro:property name="chassis_mass" value="0.5" />
+<xacro:property name="chassis_ixx" value="0.000833" />
+<xacro:property name="chassis_iyy" value="0.003125" />
+<xacro:property name="chassis_izz" value="0.003542" />
+
+<xacro:property name="pendulum_mass" value="0.1" />
+<xacro:property name="pendulum_ixx" value="0.0075" />
+<xacro:property name="pendulum_izz" value="0.0000333" />
+
+<!-- Generated using onshape-to-robot -->
+<!-- Onshape document_id: 4d41d01f1d1dddb6a7185f9b -->
+
+  <!-- World link -->
+  <link name="world" />
+
+  <!-- Rail link -->
+  <link name="rail">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="0.3" />
+      <inertia ixx="0.000625" ixy="0" ixz="0" iyy="0.004167" iyz="0" izz="0.004167" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://description/assets/rail.stl" />
+      </geometry>
+      <material name="rail_material">
+        <color rgba="0.5 0.5 0.5 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://description/assets/rail.stl" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- World to rail joint -->
+  <joint name="world_to_rail" type="fixed">
+    <parent link="world" />
+    <child link="rail" />
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </joint>
+
+  <!-- Rail to cart joint -->
+  <joint name="rail_to_cart" type="prismatic">
+    <parent link="rail" />
+    <child link="chasis" />
+    <origin xyz="0 0 -0.015" rpy="0 0 0" />
+    <axis xyz="1 0 0" />
+    <limit effort="100" velocity="2.0" lower="-1" upper="1.25" />
+  </joint>
+
+  <!-- chasis link -->
+  <link name="chasis">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="${chassis_mass}" />
+      <inertia ixx="${chassis_ixx}" ixy="0" ixz="0" iyy="${chassis_iyy}" iyz="0"
+        izz="${chassis_izz}" />
+    </inertial>
+    
+    <visual>
+      <origin xyz="-0.252801 0 0.092907" rpy="0 -0 0"/>
+      <geometry>
+        <mesh filename="package://description/assets/chasis.stl"/>
+      </geometry>
+      <material name="chasis_material">
+        <color rgba="0.0784314 0.498039 0.956863 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="-0.252801 0 0.092907" rpy="0 -0 0"/>
+      <geometry>
+        <mesh filename="package://description/assets/chasis.stl"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- wheel link -->
+  <link name="wheel">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="${wheel_mass}" />
+      <inertia ixx="${wheel_ixx}" ixy="0" ixz="0" iyy="${wheel_ixx}" iyz="0" izz="${wheel_izz}" />
+    </inertial>
+    <!-- Part wheel -->
+    <visual>
+      <origin xyz="-5.08e-10 -0.0623 0.0002" rpy="1.5708 -0 -1.5708"/>
+      <geometry>
+        <mesh filename="package://description/assets/wheel.stl"/>
+      </geometry>
+      <material name="wheel_material">
+        <color rgba="0.301961 0.301961 0.301961 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="-5.08e-10 -0.0623 0.0002" rpy="1.5708 -0 -1.5708"/>
+      <geometry>
+        <mesh filename="package://description/assets/wheel.stl"/>
+      </geometry>
+    </collision>
+  </link>
+  <!-- Joint from chasis to wheel -->
+  <joint name="wheel1" type="continuous">
+    <origin xyz="-0.36 0.02 0.075" rpy="1.5708 -0 0"/>
+    <parent link="chasis"/>
+    <child link="wheel"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <!-- Link wheel_2 -->
+  <link name="wheel_2">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="${wheel_mass}" />
+      <inertia ixx="${wheel_ixx}" ixy="0" ixz="0" iyy="${wheel_ixx}" iyz="0" izz="${wheel_izz}" />
+    </inertial>
+    
+    <visual>
+      <origin xyz="-8.29e-10 -0.0623 0.0002" rpy="1.5708 -0 -1.5708"/>
+      <geometry>
+        <mesh filename="package://description/assets/wheel.stl"/>
+      </geometry>
+      <material name="wheel_2_material">
+        <color rgba="0.301961 0.301961 0.301961 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="-8.29e-10 -0.0623 0.0002" rpy="1.5708 -0 -1.5708"/>
+      <geometry>
+        <mesh filename="package://description/assets/wheel.stl"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Joint from chasis to wheel_2 -->
+  <joint name="wheel2" type="continuous">
+    <origin xyz="-0.16 0.02 0.075" rpy="1.5708 -0 0"/>
+    <parent link="chasis"/>
+    <child link="wheel_2"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <!--  wheel_3 link -->
+  <link name="wheel_3">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="${wheel_mass}" />
+      <inertia ixx="${wheel_ixx}" ixy="0" ixz="0" iyy="${wheel_ixx}" iyz="0" izz="${wheel_izz}" />
+    </inertial>
+   
+    <visual>
+      <origin xyz="-2.9e-11 0.0623 0.0002" rpy="1.5708 -0 1.5708"/>
+      <geometry>
+        <mesh filename="package://description/assets/wheel.stl"/>
+      </geometry>
+      <material name="wheel_3_material">
+        <color rgba="0.301961 0.301961 0.301961 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="-2.9e-11 0.0623 0.0002" rpy="1.5708 -0 1.5708"/>
+      <geometry>
+        <mesh filename="package://description/assets/wheel.stl"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Joint from chasis to wheel_3 -->
+  <joint name="wheel3" type="continuous">
+    <origin xyz="-0.16 -0.12 0.075" rpy="-1.5708 -0 0"/>
+    <parent link="chasis"/>
+    <child link="wheel_3"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <!--wheel_4 link -->
+  <link name="wheel_4">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="${wheel_mass}" />
+      <inertia ixx="${wheel_ixx}" ixy="0" ixz="0" iyy="${wheel_ixx}" iyz="0" izz="${wheel_izz}" />
+    </inertial>
+ 
+    <visual>
+      <origin xyz="-2.9e-11 0.0623 0.0002" rpy="1.5708 -0 1.5708"/>
+      <geometry>
+        <mesh filename="package://description/assets/wheel.stl"/>
+      </geometry>
+      <material name="wheel_4_material">
+        <color rgba="0.301961 0.301961 0.301961 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="-2.9e-11 0.0623 0.0002" rpy="1.5708 -0 1.5708"/>
+      <geometry>
+        <mesh filename="package://description/assets/wheel.stl"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Joint from chasis to wheel_4 -->
+  <joint name="wheel4" type="continuous">
+    <origin xyz="-0.36 -0.12 0.075" rpy="-1.5708 -0 0"/>
+    <parent link="chasis"/>
+    <child link="wheel_4"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <!-- pendulum link-->
+  <link name="pendulum">
+    <inertial>
+      <origin xyz="0 0 0.15" rpy="0 0 0" />
+      <mass value="${pendulum_mass}" />
+      <inertia ixx="${pendulum_ixx}" ixy="0" ixz="0" iyy="${pendulum_ixx}" iyz="0"
+        izz="${pendulum_izz}" />
+    </inertial>
+    
+    <visual>
+      <origin xyz="-0 -0.3 -0.002" rpy="1.5708 0 -0"/>
+      <geometry>
+        <mesh filename="package://description/assets/pendulum.stl"/>
+      </geometry>
+      <material name="pendulum_material">
+        <color rgba="0.0862745 0.392157 0.952941 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="-0 -0.3 -0.002" rpy="1.5708 0 -0"/>
+      <geometry>
+        <mesh filename="package://description/assets/pendulum.stl"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Joint from chasis to pendulum -->
+  <joint name="pendulum_joint" type="revolute">
+    <origin xyz="-0.253944 -0.05 0.17757" rpy="-1.5708 -0.214745 -3.14159"/>
+    <parent link="chasis"/>
+    <child link="pendulum"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="100" velocity="100" lower="-3.141592653589793" upper="3.141592653589793"/>
+  </joint>
+
+  <!-- IMU link -->
+  <link name="imu_link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="0.01" />
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.05 0.05 0.02" />
+      </geometry>
+      <material name="imu_material">
+        <color rgba="0.1 0.1 0.1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.05 0.05 0.02" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- IMU joint  -->
+  <joint name="imu_joint" type="fixed">
+    <parent link="pendulum" />
+    <child link="imu_link" />
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </joint>
+
+
+  <!-- GAZEBO PLUGINS -->
+
+  <ros2_control name="GazeboSimSystem" type="system">
+    <hardware>
+      <plugin>gz_ros2_control::GazeboSimSystem</plugin>
+    </hardware>
+
+    <joint name="rail_to_cart">
+      <command_interface name="effort" />
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+
+    <joint name="pendulum_joint">
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+  </ros2_control>
+
+  <gazebo>
+    <plugin filename="gz_ros2_control-system" 
+            name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <parameters>$(find description)/config/controller.yaml</parameters>
+    </plugin>
+  </gazebo>
+
+  <!-- Cart position publisher-->
+  <gazebo>
+    <plugin filename="gz-sim-joint-state-publisher-system"
+      name="gz::sim::systems::JointStatePublisher">
+      <joint_name>rail_to_cart</joint_name>
+      <topic>/cart_joint_states</topic>
+      <update_rate>100</update_rate>
+    </plugin>
+  </gazebo>
+
+  <!-- IMU sensor  -->
+  <gazebo reference="imu_link">
+    <sensor name="pendulum_imu" type="imu">
+      <always_on>true</always_on>
+      <update_rate>100</update_rate>
+      <topic>/pendulum_imu</topic>
+      
+      <imu>
+        <angular_velocity>
+          <x>
+            <noise type="gaussian">
+              <mean>0</mean>
+              <stddev>0.001</stddev>
+            </noise>
+          </x>
+          <y>
+            <noise type="gaussian">
+              <mean>0</mean>
+              <stddev>0.001</stddev>
+            </noise>
+          </y>
+          <z>
+            <noise type="gaussian">
+              <mean>0</mean>
+              <stddev>0.001</stddev>
+            </noise>
+          </z>
+        </angular_velocity>
+        <linear_acceleration>
+          <x>
+            <noise type="gaussian">
+              <mean>0</mean>
+              <stddev>0.01</stddev>
+            </noise>
+          </x>
+          <y>
+            <noise type="gaussian">
+              <mean>0</mean>
+              <stddev>0.01</stddev>
+            </noise>
+          </y>
+          <z>
+            <noise type="gaussian">
+              <mean>0</mean>
+              <stddev>0.01</stddev>
+            </noise>
+          </z>
+        </linear_acceleration>
+      </imu>
+      <visualize>true</visualize>
+    </sensor>
+  </gazebo>
+
+  <!-- Wheel friction -->
+  <gazebo reference="wheel">
+    <collision>
+      <surface>
+        <friction>
+          <ode>
+            <mu>1.0</mu>
+            <mu2>1.0</mu2>
+          </ode>
+        </friction>
+        <contact>
+          <ode>
+            <kp>1e7</kp>
+            <kd>1.0</kd>
+          </ode>
+        </contact>
+      </surface>
+    </collision>
+  </gazebo>
+
+  <gazebo reference="wheel_2">
+    <collision>
+      <surface>
+        <friction>
+          <ode>
+            <mu>1.0</mu>
+            <mu2>1.0</mu2>
+          </ode>
+        </friction>
+        <contact>
+          <ode>
+            <kp>1e7</kp>
+            <kd>1.0</kd>
+          </ode>
+        </contact>
+      </surface>
+    </collision>
+  </gazebo>
+
+  <gazebo reference="wheel_3">
+    <collision>
+      <surface>
+        <friction>
+          <ode>
+            <mu>1.0</mu>
+            <mu2>1.0</mu2>
+          </ode>
+        </friction>
+        <contact>
+          <ode>
+            <kp>1e7</kp>
+            <kd>1.0</kd>
+          </ode>
+        </contact>
+      </surface>
+    </collision>
+  </gazebo>
+
+
+  <gazebo reference="wheel_4">
+    <collision>
+      <surface>
+        <friction>
+          <ode>
+            <mu>1.0</mu>
+            <mu2>1.0</mu2>
+          </ode>
+        </friction>
+        <contact>
+          <ode>
+            <kp>1e7</kp>
+            <kd>1.0</kd>
+          </ode>
+        </contact>
+      </surface>
+    </collision>
+  </gazebo>
+
+</robot>

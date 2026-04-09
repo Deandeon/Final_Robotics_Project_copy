@@ -1,0 +1,63 @@
+{
+  "name": "Final Project container",
+  "dockerFile": "Dockerfile",
+  "runArgs": ["--privileged", "--network=host"],
+  "workspaceMount": "source=${localWorkspaceFolder},target=/home/ubuntu/development/ros/ros2_ws/src/${localWorkspaceFolderBasename},type=bind",
+  "workspaceFolder": "/home/ubuntu/development/ros/ros2_ws/src/${localWorkspaceFolderBasename}",
+  "mounts": [
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.bash_history,target=/home/vscode/.bash_history,type=bind"
+  ],
+  "features": {
+    "ghcr.io/devcontainers/features/desktop-lite:1": {},
+    "ghcr.io/devcontainers/features/python:1": {},
+    "ghcr.io/devcontainers-extra/features/ruff:2": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-python.debugpy",
+        "Ranch-Hand-Robotics.rde-pack",
+        "bierner.markdown-mermaid",
+        "charliermarsh.ruff",
+        "DavidAnson.vscode-markdownlint",
+        "eamodio.gitlens",
+        "esbenp.prettier-vscode",
+        "formulahendry.auto-close-tag",
+        "formulahendry.auto-rename-tag",
+        "Gruntfuggly.todo-tree",
+        "jeff-hykin.polacode-2019",
+        "ms-azuretools.vscode-docker",
+        "ms-dotnettools.vscode-dotnet-runtime",
+        "ms-vscode.cpptools",
+        "ms-vscode.cpptools-extension-pack",
+        "ms-vscode.makefile-tools",
+        "ms-vsliveshare.vsliveshare",
+        "njpwerner.autodocstring",
+        "psioniq.psi-header",
+        "redhat.vscode-xml",
+        "redhat.vscode-yaml",
+        "smilerobotics.urdf",
+        "streetsidesoftware.code-spell-checker-british-english",
+        "tamasfe.even-better-toml",
+        "twxs.cmake",
+        "wayou.vscode-todo-highlight",
+        "mathematic.vscode-latex",
+        "James-Yu.latex-workshop",
+        "dotenv.dotenv-vscode",
+        "morningfrog.urdf-visualizer",
+        "GitHub.copilot-chat",
+        "IronGeek.vscode-env",
+        "ms-vscode.live-server",
+        "christian-kohler.path-intellisense"
+      ],
+      "settings": {
+        "psi-header.config": {
+          "forceToTop": true
+        },
+        "ruff.configuration": "${workspaceFolder}/ruff.toml"
+      }
+    }
+  }
+}
