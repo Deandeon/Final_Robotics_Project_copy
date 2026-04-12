@@ -1,0 +1,11 @@
+mpc_node:
+  ros__parameters:
+    horizon: 20           
+    dt: 0.01             
+    max_force: 15.0      
+    track_limit: 1.0     
+    
+    # Cost Weights (Q for state error, R for effort)
+    weight_x: 10.0       
+    weight_theta: 100.0   
+    weight_u: 0.1         

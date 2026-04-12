@@ -7,8 +7,9 @@ controller_manager:
       type: "joint_state_broadcaster/JointStateBroadcaster"
 
     cart_effort_controller:
-      type: "effort_controllers/JointEffortController"
+      type: "forward_command_controller/ForwardCommandController"
 
 cart_effort_controller:
   ros__parameters:
-    joint: rail_to_cart
+    joints: ["rail_to_cart"]
+    interface_name: effort

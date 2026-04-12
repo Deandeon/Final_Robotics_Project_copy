@@ -3,14 +3,17 @@
 <package format="3">
   <name>mpc_control</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
+  <description>MPC controller for inverted pendulum</description>
   <maintainer email="lois.gyamfi@ashesi.edu.gh">ubuntu</maintainer>
-  <license>TODO: License declaration</license>
+  <license>MIT</license>
 
   <depend>rclpy</depend>
-  <depend>control_base</depend>
   <depend>numpy</depend>
   <depend>scipy</depend>
+  <depend>sensor_msgs</depend>
+  <depend>std_msgs</depend>
+
+  <exec_depend>control_base</exec_depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>

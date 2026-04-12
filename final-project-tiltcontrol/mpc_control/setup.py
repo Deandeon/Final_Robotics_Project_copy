@@ -15,8 +15,8 @@ setup(
     zip_safe=True,
     maintainer='ubuntu',
     maintainer_email='lois.gyamfi@ashesi.edu.gh',
-    description='TODO: Package description',
-    license='TODO: License declaration',
+    description='MPC controller for inverted pendulum',
+    license='MIT',
     extras_require={
         'test': [
             'pytest',
@@ -24,6 +24,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
+            'mpc_controller = mpc_control.mpc_controller:main',
         ],
     },
 )
