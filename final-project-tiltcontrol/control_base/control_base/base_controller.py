@@ -51,7 +51,7 @@ class BaseController(Node):
     # position and velocity from  the cart joint
     def cart_callback(self, msg):
         
-        if 'rail_to_cart' in msg.name:
+         if 'rail_to_cart' in msg.name:
             idx = msg.name.index('rail_to_cart')
             self.state.cart_position = msg.position[idx]
             self.state.cart_velocity = msg.velocity[idx]

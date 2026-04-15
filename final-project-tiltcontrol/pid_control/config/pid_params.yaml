@@ -1,0 +1,8 @@
+# PID gains; taken directly from tesr.py...
+# Tune these live with: ros2 param set /pid_controller Kp 60.0...
+pid_controller:
+  ros__parameters:
+    Kp: 50.0
+    Ki: 10.0
+    Kd: 5.0
+    max_effort: 100.0

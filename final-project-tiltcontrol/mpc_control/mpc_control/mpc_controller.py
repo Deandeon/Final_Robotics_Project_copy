@@ -1,14 +1,16 @@
-import rclpy
-import numpy as np
 import cvxpy as cp
+import numpy as np
+import rclpy
 from scipy.signal import cont2discrete
+
 from control_base.base_controller import BaseController
 
 
 class MPCController(BaseController):
     def __init__(self):
         super().__init__('mpc_controller')
-
+        self.last_force = 0.0
+        
         # --- System parameters ---
         M = 0.5      # cart mass (kg)
         m = 0.1      # pendulum mass (kg)
@@ -44,9 +46,7 @@ class MPCController(BaseController):
         self.A, self.B, _, _, _ = cont2discrete(
             (A_cont, B_cont, C_dummy, D_dummy), self.dt, method='zoh')
 
-        # --- IMPROVEMENT 2: Pre-compile CVXPY Problem ---
-        # We define x0 as a "Parameter". This allows us to change the starting state
-        # in the loop without rebuilding the whole math problem every 0.01 seconds!
+       
         self.x0_param = cp.Parameter(4)
 
         self.x_var = cp.Variable((4, self.N + 1))
@@ -73,8 +73,8 @@ class MPCController(BaseController):
         cost += cp.quad_form(self.x_var[:, self.N], self.Q)
 
         # State constraints
-        constraints.append(self.x_var[2, :] <= 1.2)
-        constraints.append(self.x_var[2, :] >= -0.9)
+       # constraints.append(self.x_var[2, :] <= 1.2)
+        # constraints.append(self.x_var[2, :] >= -0.9)
 
         # Build the problem ONCE in init
         self.problem = cp.Problem(cp.Minimize(cost), constraints)
@@ -82,26 +82,41 @@ class MPCController(BaseController):
     def compute_control(self, state):
 
         if None in [state.pendulum_angle, state.pendulum_velocity, state.cart_position, state.cart_velocity]:
+            self.get_logger().warn('Waiting for valid sensor data from Gazebo...',
+                                   throttle_duration_sec=2.0)
             return 0.0
-        
+
+        self.get_logger().info(
+            f'Angle: {state.pendulum_angle:.6f} | '
+            f'Cart: {state.cart_position:.6f} | '
+            f'Force: {self.last_force:.6f}',
+            throttle_duration_sec=2.0)
+
         # Pack current state into a vector
         x0_current = np.array([
-            state.pendulum_angle,
-            state.pendulum_velocity,
-            state.cart_position,
-            state.cart_velocity
-        ], dtype=float)
+            float(state.pendulum_angle),
+            float(state.pendulum_velocity),
+            float(state.cart_position),
+            float(state.cart_velocity)
+        ], dtype=np.float64)
 
-        # --- IMPROVEMENT 3: Fast Execution ---
-        # Update the parameter value, and solve.
-        # Because we aren't rebuilding the problem, this takes fractions of a millisecond.
+        if np.any(np.isnan(x0_current)) or np.any(np.isinf(x0_current)):
+            self.get_logger().warn('Physics glitch (NaN/Inf) detected. Skipping cycle.',
+                                   throttle_duration_sec=2.0)
+            return 0.0
+
         self.x0_param.value = x0_current
+
+        if self.x0_param.value is None:
+            self.get_logger().error(
+                'CRITICAL: CVXPY silently rejected the parameter assignment due to a shape/type mismatch.')
+            return 0.0
 
         try:
             # warm_start=True makes it even faster by remembering the last solution
-            self.problem.solve(solver=cp.OSQP, warm_start=True)
+            self.problem.solve(solver=cp.OSQP, warm_start=True, max_iter=10000)
 
-            if self.problem.status in ['optimal', 'optimal_inaccurate']:
+            if self.problem.status in ['optimal', 'optimal_inaccurate', 'user_limit']:
                 # Extract the value safely
                 u_val = self.u_var.value
 
@@ -110,8 +125,9 @@ class MPCController(BaseController):
                     # Use .item() to safely grab the first float regardless of 1D/2D shape
                     # Or use float(u_val[0]) if you strictly defined it as a 1D array
                     force = float(np.array(u_val).flatten()[0])
+                    self.last_force = force
 
-                    # Redundant clamp just for safety before sending to motors
+                    
                     force = max(min(force, 50.0), -50.0)
                     return force
                 else:

@@ -1,0 +1,18 @@
+lqr_controller:
+  ros__parameters:
+    # System parameters
+    cart_mass: 0.5        # M (kg)
+    pendulum_mass: 0.1    # m (kg)
+    pendulum_length: 0.15 # L (m)
+    gravity: 9.81         # g (m/s^2)
+    dt: 0.01              # control timestep (s)
+
+    # Force saturation
+    max_force: 50.0       # N
+
+    # LQR cost weights — state: [theta, theta_dot, x, x_dot]
+    weight_theta: 200.0   # penalise pendulum angle error
+    weight_theta_dot: 1.0 # penalise pendulum angular velocity
+    weight_x: 10.0        # penalise cart position error
+    weight_x_dot: 5.0     # penalise cart velocity
+    weight_u: 0.1         # penalise control effort (R)
