@@ -50,7 +50,8 @@ def generate_launch_description():
         executable='create',
         arguments=[
             '-topic', 'robot_description',
-            '-name', 'tiltcontrol'
+            '-name', 'tiltcontrol',
+            '-Y', '1.5708'
         ],
         output='screen'
     )
@@ -111,6 +112,5 @@ def generate_launch_description():
         load_joint_state_broadcaster,
         load_cart_effort_controller,
     ])
-
 
 

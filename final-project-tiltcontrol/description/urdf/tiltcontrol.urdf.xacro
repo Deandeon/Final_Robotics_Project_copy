@@ -221,7 +221,7 @@
   <!-- pendulum link-->
   <link name="pendulum">
     <inertial>
-      <origin xyz="0 0 0.15" rpy="0 0 0" />
+      <origin xyz="0 0.15 0" rpy="0 0 0" />
       <mass value="${pendulum_mass}" />
       <inertia ixx="${pendulum_ixx}" ixy="0" ixz="0" iyy="${pendulum_ixx}" iyz="0"
         izz="${pendulum_izz}" />
@@ -236,17 +236,17 @@
         <color rgba="0.0862745 0.392157 0.952941 1"/>
       </material>
     </visual>
-    <collision>
-      <origin xyz="-0 -0.3 -0.002" rpy="1.5708 0 -0"/>
-      <geometry>
-        <mesh filename="package://description/assets/pendulum.stl"/>
-      </geometry>
-    </collision>
+    <collision> 
+      <origin xyz="-0 -0.3 -0.002" rpy="1.5708 0 -0"/> 
+      <geometry> 
+        <mesh filename="package://description/assets/pendulum.stl"/> 
+      </geometry> 
+    </collision> 
   </link>
 
   <!-- Joint from chasis to pendulum -->
-  <joint name="pendulum_joint" type="revolute">
-    <origin xyz="-0.253944 -0.05 0.17757" rpy="-1.5708 -0.214745 -3.14159"/>
+  <joint name="pendulum_joint" type="continuous">
+    <origin xyz="-0.253944 -0.05 0.17757" rpy="-1.5708 0 -3.14159"/>
     <parent link="chasis"/>
     <child link="pendulum"/>
     <axis xyz="0 0 1"/>
@@ -316,6 +316,7 @@
     <plugin filename="gz-sim-joint-state-publisher-system"
       name="gz::sim::systems::JointStatePublisher">
       <joint_name>rail_to_cart</joint_name>
+      <joint_name>pendulum_joint</joint_name>
       <topic>/cart_joint_states</topic>
       <update_rate>100</update_rate>
     </plugin>
